@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Đang mở ứng dụng...</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 60px;
+    }
+  </style>
+  <script>
+    const androidPackage = "s1.vn.villship";
+    const iosAppStoreLink = "https://apps.apple.com/app/id000000000"; // Cập nhật nếu có
+    const fallbackDelay = 2000;
+
+    // Lấy đường dẫn từ query string (ví dụ: ?path=/order/123)
+    const urlParams = new URLSearchParams(window.location.search);
+    const dynamicPath = urlParams.get("path") || "";
+
+    const deepLinkScheme = `villship://${dynamicPath}`;
+    const intentLink = `intent://${dynamicPath}#Intent;scheme=villship;package=${androidPackage};end;`;
+    const androidStore = `https://play.google.com/store/apps/details?id=${androidPackage}`;
+
+    function openApp() {
+      const ua = navigator.userAgent.toLowerCase();
+      const isAndroid = ua.includes("android");
+      const isIOS = ua.includes("iphone") || ua.includes("ipad");
+
+      if (isAndroid) {
+        // Mở intent link cho Android
+        window.location.href = intentLink;
+        setTimeout(() => {
+          window.location.href = androidStore;
+        }, fallbackDelay);
+      } else if (isIOS) {
+        // Mở scheme trực tiếp cho iOS
+        window.location.href = deepLinkScheme;
+        setTimeout(() => {
+          window.location.href = iosAppStoreLink;
+        }, fallbackDelay);
+      } else {
+        // Nếu không xác định được thiết bị
+        window.location.href = androidStore;
+      }
+    }
+  </script>
+</head>
+<body onload="openApp()">
+  <h2>Đang mở ứng dụng VILLSHIP...</h2>
+  <p>Nếu ứng dụng không tự mở, hãy bấm vào nút bên dưới:</p>
+  <a id="fallbackLink" href="#" style="font-size:18px;color:blue;">Mở ứng dụng</a>
+
+  <script>
+    document.getElementById("fallbackLink").href = `villship://${dynamicPath}`;
+  </script>
+</body>
+</html>
